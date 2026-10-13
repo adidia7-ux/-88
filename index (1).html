@@ -1,0 +1,356 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>רוזן ענק הביטוח</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700;800&display=swap">
+<style>
+/* Layout: single centered column — brand header, who-is-adding bar, date bar, marketer grid, then today's log + monthly summaries */
+:root{
+  --bg:#fdf6f3; --surface:#ffffff; --surface-2:#fdf0ec; --line:#f1d6cf;
+  --fg:#3b1d1a; --muted:#8a6560; --brand:#d42a2a; --brand-2:#a8181d; --brand-soft:#fde3e1;
+  --gold:#e9a23b; --ok:#22a55a;
+  --a1:#d97706; --a2:#7c3aed; --a3:#0891b2; --a4:#16a34a; --a5:#db2777; --a6:#2563eb;
+  --font:"Rubik","Heebo","Segoe UI",Arial,sans-serif;
+  --r:12px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#1b1212; --surface:#251818; --surface-2:#2d1d1c; --line:#43292a;
+  --fg:#f6e7e4; --muted:#bb9893; --brand:#e5484d; --brand-2:#b4232a; --brand-soft:#3d1f20;
+  --gold:#f0b35a; --ok:#3ccf7a;
+  --a1:#f59e0b; --a2:#a78bfa; --a3:#22d3ee; --a4:#4ade80; --a5:#f472b6; --a6:#60a5fa;
+  color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#1b1212; --surface:#251818; --surface-2:#2d1d1c; --line:#43292a;
+  --fg:#f6e7e4; --muted:#bb9893; --brand:#e5484d; --brand-2:#b4232a; --brand-soft:#3d1f20;
+  --gold:#f0b35a; --ok:#3ccf7a;
+  --a1:#f59e0b; --a2:#a78bfa; --a3:#22d3ee; --a4:#4ade80; --a5:#f472b6; --a6:#60a5fa;
+  color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--font);font-size:15px;padding-inline:16px;padding-block:14px 40px}
+.wrap{max-width:820px;margin-inline:auto;display:flex;flex-direction:column;gap:14px}
+button,input{font-family:inherit}
+button:focus-visible,input:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+
+.hero{background:linear-gradient(115deg,var(--brand-2),var(--brand));color:#fff;border-radius:16px;padding:18px 20px;display:flex;align-items:center;gap:14px;box-shadow:0 8px 22px -12px var(--brand)}
+.logo{width:56px;height:56px;border-radius:50%;background:#fff;color:var(--brand-2);border:3px solid var(--gold);display:grid;place-items:center;font-weight:800;font-size:26px;flex:none}
+.hero h1{margin:0;font-size:22px;font-weight:800;text-wrap:balance}
+.hero p{margin:2px 0 0;font-size:13px;opacity:.9}
+
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r)}
+.status{padding:9px 14px;font-size:13px;display:flex;align-items:center;gap:8px;color:var(--muted)}
+.dot{width:9px;height:9px;border-radius:50%;background:var(--muted)}
+.dot.on{background:var(--ok)}
+
+.who{padding:12px 14px;display:flex;flex-direction:column;gap:10px}
+.who.flash{animation:flash .9s 2}
+@keyframes flash{50%{box-shadow:0 0 0 3px var(--gold)}}
+.who-head{display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap}
+.who-head b{font-size:15px}
+.who-head span{font-size:12.5px;color:var(--muted)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{--c:var(--muted);border:2px solid var(--c);background:transparent;color:var(--fg);border-radius:999px;padding:6px 14px 6px 10px;font-size:14px;font-weight:500;cursor:pointer;display:flex;align-items:center;gap:7px}
+.chip i{width:22px;height:22px;border-radius:50%;background:var(--c);color:#fff;font-style:normal;font-size:12px;font-weight:700;display:grid;place-items:center}
+.chip[aria-pressed="true"]{background:var(--c);color:#fff}
+.chip[aria-pressed="true"] i{background:#fff;color:var(--c)}
+
+.datebar{padding:10px 14px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.datebar label{display:flex;align-items:center;gap:8px;font-weight:500}
+.datebar input{border:1px solid var(--line);background:var(--surface-2);color:var(--fg);border-radius:8px;padding:6px 10px;font-size:14px}
+.btns{display:flex;gap:8px;flex-wrap:wrap}
+.btn{border:1.5px solid var(--brand);background:transparent;color:var(--brand);border-radius:9px;padding:7px 14px;font-weight:700;font-size:13px;cursor:pointer}
+.btn.solid{background:var(--brand);color:#fff}
+.btn:disabled{opacity:.5;cursor:default}
+.pastnote{font-size:12.5px;color:var(--muted)}
+.confirm{padding:12px 14px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;border-color:var(--brand);background:var(--brand-soft)}
+
+.grid{overflow:hidden}
+.ghead{display:grid;grid-template-columns:minmax(120px,190px) 1fr 64px;gap:10px;background:var(--brand);color:#fff;padding:11px 14px;font-weight:700;font-size:14px}
+.ghead div:nth-child(2){text-align:center}
+.ghead div:last-child{text-align:center}
+.row{display:grid;grid-template-columns:minmax(120px,190px) 1fr 64px;gap:10px;align-items:center;padding:9px 14px;border-top:1px solid var(--line)}
+.row:nth-child(odd){background:var(--surface-2)}
+.mname{border:1px solid var(--line);background:var(--surface);color:var(--fg);border-radius:8px;padding:7px 10px;font-size:14px;font-weight:700;width:100%;min-width:0}
+.boxes{display:flex;flex-wrap:wrap;gap:5px;align-items:center;min-width:0}
+.cnt{font-weight:800;color:var(--brand);min-width:22px;text-align:center;font-variant-numeric:tabular-nums}
+.sq{width:26px;height:26px;border-radius:6px;border:2px solid var(--brand);background:transparent;cursor:pointer;padding:0;color:#fff;font-size:12px;font-weight:700;display:grid;place-items:center}
+.sq:hover{background:var(--brand-soft)}
+.sq.f{border-color:var(--c);background:var(--c)}
+.sq.f:hover{filter:brightness(1.1)}
+.sq.sel{outline:3px solid var(--gold);outline-offset:1px}
+.tot{justify-self:center;background:var(--brand-soft);color:var(--brand-2);font-weight:800;border-radius:999px;padding:3px 10px;font-variant-numeric:tabular-nums}
+:root[data-theme="dark"] .tot{color:var(--fg)}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .tot{color:var(--fg)}}
+.addrow{padding:10px 14px;border-top:1px solid var(--line)}
+.linkbtn{background:none;border:none;color:var(--brand);font-weight:700;cursor:pointer;font-size:13px;padding:2px}
+
+.pop{padding:12px 14px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;border-color:var(--gold)}
+.pop b{color:var(--c)}
+
+.panels{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.panel{padding:14px 16px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.panel h2{margin:0;font-size:16px;color:var(--brand);font-weight:800}
+.panel .sub{font-size:12px;color:var(--muted);margin-top:-6px}
+.bar{display:grid;grid-template-columns:76px 1fr 36px;gap:8px;align-items:center;font-size:13.5px}
+.bar .nm{font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.track{height:13px;border-radius:99px;background:var(--surface-2);border:1px solid var(--line);overflow:hidden}
+.fill{height:100%;border-radius:99px;background:linear-gradient(90deg,var(--gold),var(--brand))}
+.fill.ag{background:var(--c)}
+.bar .v{font-weight:800;color:var(--brand);text-align:end;font-variant-numeric:tabular-nums}
+.log{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;max-height:300px;overflow:auto}
+.log li{display:grid;grid-template-columns:44px 1fr;gap:8px;padding:6px 0;border-bottom:1px dashed var(--line);font-size:13.5px}
+.log time{color:var(--muted);font-variant-numeric:tabular-nums}
+.log b{color:var(--c)}
+.empty{color:var(--muted);font-size:13px;margin:0}
+.wide{grid-column:1/-1}
+.matrix{overflow-x:auto}
+.matrix table{border-collapse:collapse;width:100%;font-size:13px;font-variant-numeric:tabular-nums}
+.matrix th,.matrix td{padding:6px 8px;border-bottom:1px solid var(--line);text-align:center;white-space:nowrap}
+.matrix th:first-child,.matrix td:first-child{text-align:start}
+.matrix thead th{color:var(--muted);font-weight:500}
+.matrix td.z{color:var(--line)}
+.matrix tfoot td{font-weight:800;color:var(--brand)}
+footer{text-align:center;font-size:12px;color:var(--muted);padding-top:4px}
+.toast{position:fixed;bottom:calc(16px + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%);background:var(--fg);color:var(--bg);padding:9px 16px;border-radius:10px;font-size:13.5px;z-index:9}
+
+@media (max-width:600px){
+  .panels{grid-template-columns:1fr}
+  .ghead{display:none}
+  .row{grid-template-columns:1fr auto;grid-template-areas:"n t" "b b"}
+  .row .mname{grid-area:n}.row .tot{grid-area:t}.row .boxes{grid-area:b}
+  .hero h1{font-size:19px}
+}
+@media (prefers-reduced-motion:reduce){.who.flash{animation:none}}
+</style>
+<style>[hidden]{display:none!important}body{margin:0}</style>
+</head>
+<body>
+<div class="wrap" dir="rtl" lang="he">
+  <header class="hero">
+    <div class="logo">ר</div>
+    <div><h1>רוזן ענק הביטוח</h1><p>מעקב יומי אחר הצעות מחיר שהתקבלו מהמשווקים</p></div>
+  </header>
+
+  <div class="card status"><span class="dot" id="dot"></span><span id="statusTxt">מתחבר...</span></div>
+
+  <section class="card who" id="who">
+    <div class="who-head"><b>מי מוסיפה עכשיו?</b><span id="whoHint">בחרי את שמך פעם אחת — כל הצעה שתוסיפי תירשם על שמך</span></div>
+    <div class="chips" id="chips"></div>
+  </section>
+
+  <section class="card datebar">
+    <label for="date">📅 תאריך: <input type="date" id="date"></label>
+    <div class="btns">
+      <button class="btn" id="todayBtn">היום</button>
+      <button class="btn solid" id="resetBtn">איפוס ליום זה</button>
+    </div>
+  </section>
+
+  <section class="card confirm" id="confirm" hidden>
+    <span id="confirmTxt"></span>
+    <div class="btns"><button class="btn solid" id="confirmYes">כן, לאפס</button><button class="btn" id="confirmNo">ביטול</button></div>
+  </section>
+
+  <section class="card grid">
+    <div class="ghead"><div>שם המשווק</div><div>הצעות שהתקבלו — לחצי על ריבוע להוסיף</div><div>סה״כ</div></div>
+    <div id="rows"></div>
+    <div class="addrow"><button class="linkbtn" id="addM">+ הוספת משווק</button></div>
+  </section>
+
+  <section class="card pop" id="pop" hidden>
+    <span id="popTxt"></span>
+    <div class="btns"><button class="btn solid" id="popDel">מחיקת ההצעה</button><button class="btn" id="popClose">סגירה</button></div>
+  </section>
+
+  <div class="panels">
+    <section class="card panel">
+      <h2>👩‍💼 מי הוסיפה — <span id="dayLbl">היום</span></h2>
+      <div id="agentDay"></div>
+    </section>
+    <section class="card panel">
+      <h2>🕒 יומן הצעות</h2>
+      <ul class="log" id="log"></ul>
+    </section>
+    <section class="card panel wide">
+      <h2>📊 סיכום חודשי — <span id="monthLbl"></span></h2>
+      <div class="sub">כמה הצעות כל נציגה הוסיפה לכל משווק החודש</div>
+      <div class="matrix" id="matrix"></div>
+    </section>
+  </div>
+
+  <footer>רוזן ענק הביטוח • כל יום מתחיל מאפס אוטומטית • הנתונים מסונכרנים בין כל המכשירים</footer>
+</div>
+<div class="toast" id="toast" hidden></div>
+
+
+<!-- ================== הגדרת Firebase (לסנכרון בין כל המחשבים) ==================
+     הדביקי כאן את ההגדרות מפרויקט ה-Firebase שלך (ראי הוראות ב-README).
+     כל עוד ההגדרות ריקות, האפליקציה עובדת במצב מקומי בדפדפן אחד בלבד. -->
+<script>
+window.FIREBASE_CONFIG = {
+  apiKey: "",
+  authDomain: "",
+  projectId: "",
+  storageBucket: "",
+  messagingSenderId: "",
+  appId: ""
+};
+</script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script>
+
+// ---- Local fallback store (same API shape as Firestore compat) — used only when Firebase isn't configured
+function LocalDB(){
+  const KEY="rosen_db";const subs=new Set();
+  const load=()=>{try{return JSON.parse(localStorage.getItem(KEY))||{}}catch(e){return {}}};
+  const save=d=>{try{localStorage.setItem(KEY,JSON.stringify(d))}catch(e){}subs.forEach(f=>f())};
+  window.addEventListener("storage",e=>{if(e.key===KEY)subs.forEach(f=>f())});
+  const snapDoc=(id,data)=>({id,exists:data!==undefined,data:()=>data});
+  const watch=fn=>{subs.add(fn);fn();return()=>subs.delete(fn)};
+  const docRef=path=>({
+    set:async v=>{const d=load();d[path]=v;save(d)},
+    delete:async()=>{const d=load();delete d[path];save(d)},
+    onSnapshot:(next)=>watch(()=>next(snapDoc(path.split("/").pop(),load()[path])))
+  });
+  const query=(col,filters,lim)=>({
+    where:(f,op,v)=>query(col,filters.concat([[f,v]]),lim),
+    limit:n=>query(col,filters,n),
+    add:async v=>{const id=Date.now().toString(36)+Math.random().toString(36).slice(2,8);const d=load();d[col+"/"+id]=v;save(d);return docRef(col+"/"+id)},
+    onSnapshot:(next)=>watch(()=>{const d=load();const docs=Object.keys(d).filter(k=>k.startsWith(col+"/")&&filters.every(([f,v])=>d[k][f]===v)).slice(0,lim||1e9).map(k=>snapDoc(k.slice(col.length+1),d[k]));next({docs,size:docs.length,empty:!docs.length})})
+  });
+  return {doc:docRef,collection:c=>query(c,[],0)};
+}
+
+const AGENTS=[["כוכבה","--a1"],["מירי","--a2"],["אורנה","--a3"],["טל","--a4"],["עדי","--a5"],["רעות","--a6"]];
+const DEFAULT_M=["אלעד","משווק 2","משווק 3","משווק 4","משווק 5","משווק 6"];
+const colorOf=n=>{const a=AGENTS.find(x=>x[0]===n);return a?`var(${a[1]})`:"var(--muted)"};
+const $=id=>document.getElementById(id);
+const fmtDay=d=>new Intl.DateTimeFormat("en-CA",{timeZone:"Asia/Jerusalem"}).format(d);
+const todayStr=()=>fmtDay(new Date());
+const hhmm=iso=>new Intl.DateTimeFormat("he-IL",{timeZone:"Asia/Jerusalem",hour:"2-digit",minute:"2-digit"}).format(new Date(iso));
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+let db=null, localMode=false, me=null, marketers=DEFAULT_M.slice(), dayOffers=[], monthOffers=[];
+let selDate=todayStr(), followToday=true, unsubDay=null, unsubMonth=null, popId=null, busy=false;
+try{me=localStorage.getItem("rosen_agent")}catch(e){}
+
+function toast(t){const el=$("toast");el.textContent=t;el.hidden=false;clearTimeout(toast.t);toast.t=setTimeout(()=>el.hidden=true,2200)}
+
+function renderChips(){
+  $("chips").innerHTML=AGENTS.map(([n,c])=>`<button class="chip" style="--c:var(${c})" data-a="${n}" aria-pressed="${me===n}"><i>${n[0]}</i>${n}</button>`).join("");
+  $("whoHint").textContent=me?`כל הצעה שתוסיפי תירשם על שם ${me}`:"בחרי את שמך פעם אחת — כל הצעה שתוסיפי תירשם על שמך";
+}
+$("chips").onclick=e=>{const b=e.target.closest(".chip");if(!b)return;me=b.dataset.a;try{localStorage.setItem("rosen_agent",me)}catch(e){}renderChips()};
+
+function render(){
+  const isToday=selDate===todayStr();
+  $("dayLbl").textContent=isToday?"היום":selDate.split("-").reverse().join("/");
+  $("monthLbl").textContent=new Intl.DateTimeFormat("he-IL",{month:"long",year:"numeric"}).format(new Date(selDate+"T12:00:00"));
+  const monthByM=marketers.map((_,i)=>monthOffers.filter(o=>o.marketer===i).length);
+  const ae=document.activeElement, keep=ae&&ae.classList.contains("mname")?[ae.id,ae.value,ae.selectionStart]:null;
+  queueMicrotask(()=>{if(keep){const el=$(keep[0]);if(el){el.value=keep[1];el.focus();try{el.setSelectionRange(keep[2],keep[2])}catch(e){}}}});
+  $("rows").innerHTML=marketers.map((name,i)=>{
+    const mine=dayOffers.filter(o=>o.marketer===i).sort((a,b)=>a.ts<b.ts?-1:1);
+    const slots=Math.max(10,mine.length+1);
+    let bx="";
+    for(let k=0;k<slots;k++){
+      const o=mine[k];
+      bx+=o?`<button class="sq f${popId===o.id?" sel":""}" style="--c:${colorOf(o.agent)}" data-id="${o.id}" title="${esc(o.agent)} • ${hhmm(o.ts)}" aria-label="הצעה של ${esc(o.agent)} בשעה ${hhmm(o.ts)}">${esc(o.agent[0])}</button>`
+          :`<button class="sq" data-m="${i}" aria-label="הוספת הצעה ל${esc(name)}"></button>`;
+    }
+    return `<div class="row"><input class="mname" id="m${i}" data-i="${i}" value="${esc(name)}" aria-label="שם משווק"><div class="boxes"><span class="cnt">${mine.length}</span>${bx}</div><span class="tot" title="סה״כ החודש">${monthByM[i]}</span></div>`;
+  }).join("");
+
+  // per-agent for the day
+  const ad=AGENTS.map(([n])=>[n,dayOffers.filter(o=>o.agent===n).length]);
+  const mx=Math.max(1,...ad.map(x=>x[1]));
+  $("agentDay").innerHTML=ad.map(([n,v])=>`<div class="bar"><span class="nm">${n}</span><div class="track"><div class="fill ag" style="--c:${colorOf(n)};width:${v/mx*100}%"></div></div><span class="v">${v}</span></div>`).join("");
+
+  // log
+  const lg=dayOffers.slice().sort((a,b)=>a.ts<b.ts?1:-1);
+  $("log").innerHTML=lg.length?lg.map(o=>`<li><time>${hhmm(o.ts)}</time><span><b style="--c:${colorOf(o.agent)}">${esc(o.agent)}</b> הוסיפה הצעה ל${esc(marketers[o.marketer]??"משווק")}</span></li>`).join("")
+    :`<li class="empty">עדיין אין הצעות ${isToday?"היום":"ביום זה"}. בחרי את שמך למעלה ולחצי על ריבוע ליד המשווק.</li>`;
+
+  // month matrix agent x marketer
+  const head=`<tr><th>נציגה</th>${marketers.map(m=>`<th>${esc(m)}</th>`).join("")}<th>סה״כ</th></tr>`;
+  const body=AGENTS.map(([n])=>{const c=marketers.map((_,i)=>monthOffers.filter(o=>o.agent===n&&o.marketer===i).length);const t=c.reduce((a,b)=>a+b,0);
+    return `<tr><td><b style="color:${colorOf(n)}">${n}</b></td>${c.map(v=>`<td class="${v?"":"z"}">${v}</td>`).join("")}<td><b>${t}</b></td></tr>`}).join("");
+  const foot=`<tr><td>סה״כ</td>${monthByM.map(v=>`<td>${v}</td>`).join("")}<td>${monthOffers.length}</td></tr>`;
+  $("matrix").innerHTML=`<table><thead>${head}</thead><tbody>${body}</tbody><tfoot>${foot}</tfoot></table>`;
+
+  $("date").value=selDate;
+  $("todayBtn").disabled=isToday;
+}
+
+$("rows").addEventListener("click",async e=>{
+  const sq=e.target.closest(".sq");if(!sq)return;
+  if(sq.dataset.id){ // filled → show who
+    const o=dayOffers.find(x=>x.id===sq.dataset.id);if(!o)return;
+    popId=o.id;$("pop").style.setProperty("--c",colorOf(o.agent));
+    $("popTxt").innerHTML=`<b>${esc(o.agent)}</b> הוסיפה הצעה ל${esc(marketers[o.marketer]??"")} בשעה ${hhmm(o.ts)}`;
+    $("pop").hidden=false;render();return;
+  }
+  if(!me){$("who").classList.remove("flash");void $("who").offsetWidth;$("who").classList.add("flash");$("who").scrollIntoView({behavior:"smooth",block:"center"});toast("קודם בחרי מי את 👆");return}
+  if(!db){toast("אין חיבור לשמירה כרגע");return}
+  const i=+sq.dataset.m;
+  try{await db.collection("offers").add({date:selDate,month:selDate.slice(0,7),marketer:i,agent:me,ts:new Date().toISOString()});}
+  catch(err){toast(err.code==="quota_exceeded"?"המאגר מלא — צריך לנקות חודשים ישנים":"השמירה נכשלה, נסי שוב")}
+});
+$("popClose").onclick=()=>{popId=null;$("pop").hidden=true;render()};
+$("popDel").onclick=async()=>{if(!popId||!db)return;const id=popId;popId=null;$("pop").hidden=true;try{await db.doc("offers/"+id).delete();toast("ההצעה נמחקה")}catch(e){toast("המחיקה נכשלה")}};
+
+$("rows").addEventListener("change",async e=>{
+  const inp=e.target.closest(".mname");if(!inp||!db)return;
+  const names=marketers.slice();names[+inp.dataset.i]=inp.value.trim()||`משווק ${+inp.dataset.i+1}`;
+  try{await db.doc("config/marketers").set({names})}catch(err){toast("שמירת השם נכשלה")}
+});
+$("addM").onclick=async()=>{if(!db)return;const names=marketers.concat(`משווק ${marketers.length+1}`);try{await db.doc("config/marketers").set({names})}catch(e){toast("ההוספה נכשלה")}};
+
+$("date").onchange=e=>{if(!e.target.value)return;selDate=e.target.value;followToday=selDate===todayStr();subscribe()};
+$("todayBtn").onclick=()=>{selDate=todayStr();followToday=true;subscribe()};
+$("resetBtn").onclick=()=>{
+  const n=dayOffers.length;if(!n){toast("אין מה לאפס ביום זה");return}
+  $("confirmTxt").textContent=`למחוק את כל ${n} ההצעות של ${selDate.split("-").reverse().join("/")}?`;$("confirm").hidden=false};
+$("confirmNo").onclick=()=>$("confirm").hidden=true;
+$("confirmYes").onclick=async()=>{
+  $("confirm").hidden=true;if(!db||busy)return;busy=true;
+  const ids=dayOffers.map(o=>o.id);
+  try{for(let k=0;k<ids.length;k+=5)await Promise.all(ids.slice(k,k+5).map(id=>db.doc("offers/"+id).delete()));toast("היום אופס")}
+  catch(e){toast("האיפוס לא הושלם, נסי שוב")}
+  busy=false;
+};
+
+function setStatus(on,t){$("dot").classList.toggle("on",on);$("statusTxt").textContent=t}
+
+function subscribe(){
+  popId=null;$("pop").hidden=true;
+  if(!db){render();return}
+  unsubDay&&unsubDay();unsubMonth&&unsubMonth();
+  const mapDocs=s=>s.docs.map(d=>({id:d.id,...d.data()}));
+  unsubDay=db.collection("offers").where("date","==",selDate).limit(1000)
+    .onSnapshot(s=>{dayOffers=mapDocs(s);setStatus(!localMode,localMode?"מצב מקומי — הנתונים נשמרים רק בדפדפן הזה (צריך להגדיר Firebase לסנכרון)":"מחובר — הנתונים מסונכרנים בזמן אמת בין כל המכשירים");render()},
+      ()=>setStatus(false,"החיבור נותק — רענני את הדף"));
+  unsubMonth=db.collection("offers").where("month","==",selDate.slice(0,7)).limit(1000)
+    .onSnapshot(s=>{monthOffers=mapDocs(s);render()},()=>{});
+  render();
+}
+
+// Daily auto-reset: when the day changes, a page showing "today" moves to the new, empty day
+setInterval(()=>{const t=todayStr();if(followToday&&selDate!==t){selDate=t;subscribe()}},30000);
+
+renderChips();render();
+(async()=>{
+  if(window.FIREBASE_CONFIG&&FIREBASE_CONFIG.apiKey&&window.firebase){
+    try{firebase.initializeApp(FIREBASE_CONFIG);db=firebase.firestore();}catch(e){db=null}
+  }
+  if(!db){db=LocalDB();localMode=true}
+  db.doc("config/marketers").onSnapshot(s=>{const n=s.exists&&s.data().names;if(Array.isArray(n)&&n.length)marketers=n.slice();render()},()=>{});
+  subscribe();
+})();
+
+</script>
+</body>
+</html>
